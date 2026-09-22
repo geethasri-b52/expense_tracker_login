@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Login and Registration -->
+  <section id="loginPage" class="login-page">
+    <div class="login-card">
+      <div class="login-icon">₹</div>
+      <h2>Expense Tracker</h2>
+      <p id="authSubtitle">Login to manage your expenses</p>
+      <form id="loginForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username" autocomplete="username" required>
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
+        <p id="loginError" class="login-error" role="alert"></p>
+        <button type="submit" class="primary login-btn">Login</button>
+      </form>
+      <p class="demo-hint">New here? <button id="showRegister" class="secondary" type="button">Create account</button></p>
+      <form id="registerForm" hidden>
+        <label for="newUsername">Choose username</label>
+        <input type="text" id="newUsername" placeholder="Create username" autocomplete="username" required minlength="3">
+        <label for="newPassword">Create password</label>
+        <input type="password" id="newPassword" placeholder="Create password (min. 5 characters)" autocomplete="new-password" required minlength="5">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" placeholder="Re-enter password" autocomplete="new-password" required>
+        <p id="registerError" class="login-error" role="alert"></p>
+        <button type="submit" class="primary login-btn">Create account</button>
+      </form>
+      <p id="backToLoginWrap" class="demo-hint" hidden>Already have an account? <button id="showLogin" class="secondary" type="button">Login</button></p>
+    </div>
+  </section>
+  <!-- Expense Tracker Dashboard -->
+  <div id="appContainer" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">₹</div>
+        <div>
+          <h1>Expense Tracker</h1>
+          <p>Track, manage, and understand your spending</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="today" id="todayLabel"></span>
+        <button id="logoutBtn" class="secondary logout-btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="welcome">
+        <div>
+          <p class="eyebrow">YOUR FINANCES AT A GLANCE</p>
+          <h2>Dashboard</h2>
+          <p class="muted">Manage your expenses in one place.</p>
+        </div>
+        <button id="newExpenseBtn" class="primary" type="button">+ Add Expense</button>
+      </section>
+
+      <section class="summary-grid" aria-label="Expense summary">
+        <article class="summary-card total-card">
+          <span class="summary-label">Total Spending</span>
+          <strong id="totalAmount">₹0.00</strong>
+          <span class="summary-note">For the currently displayed records</span>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Transactions</span>
+          <strong id="transactionCount">0</strong>
+          <span class="summary-note">Number of matching expenses</span>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Top Category</span>
+          <strong id="topCategory">—</strong>
+          <span class="summary-note" id="topCategoryAmount">No category total yet</span>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h3>Expense Records</h3>
+          <span id="resultsLabel" class="muted">0 records</span>
+        </div>
+
+        <div class="filters">
+          <div class="search-wrap">
+            <span aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" placeholder="Search title or description" aria-label="Search expenses">
+          </div>
+          <select id="categoryFilter" aria-label="Filter by category"></select>
+          <label class="date-filter"><span>From</span><input id="fromDate" type="date" aria-label="From date"></label>
+          <label class="date-filter"><span>To</span><input id="toDate" type="date" aria-label="To date"></label>
+          <button id="clearFiltersBtn" class="secondary" type="button">Clear filters</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Expense</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th class="amount-col">Amount</th>
+                <th class="actions-col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expenseRows"></tbody>
+          </table>
+          <div id="emptyState" class="empty-state">
+            <div class="empty-icon">₹</div>
+            <h4>No expenses found</h4>
+            <p>Add an expense or adjust your search and filters.</p>
+          </div>
+        </div>
+        <div class="table-footer">
+          <span>Expense records</span>
+          <span id="resultsLabelFooter">Your spending overview</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h3>Category Breakdown</h3>
+        </div>
+        <div id="categoryBreakdown" class="category-breakdown">
+          <p class="category-empty">Category totals will appear here after you add expenses.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>Expense Tracker <span>•</span> Personal spending dashboard</footer>
+  </div>
+
+  <!-- Add/Edit Expense Dialog -->
+  <dialog id="expenseDialog">
+    <form id="expenseForm">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">EXPENSE DETAILS</p>
+          <h3 id="dialogTitle">Add expense</h3>
+        </div>
+        <button id="closeDialog" class="close-btn" type="button" aria-label="Close dialog">×</button>
+      </div>
+
+      <input type="hidden" id="expenseId">
+
+      <label for="titleInput">Title
+        <input id="titleInput" type="text" placeholder="e.g. Groceries" required maxlength="100">
+      </label>
+
+      <div class="form-row">
+        <label for="amountInput">Amount (₹)
+          <input id="amountInput" type="number" min="0.01" step="0.01" placeholder="0.00" required>
+        </label>
+        <label for="categoryInput">Category
+          <select id="categoryInput" required></select>
+        </label>
+      </div>
+
+      <label for="dateInput">Date
+        <input id="dateInput" type="date" required>
+      </label>
+
+      <label for="descriptionInput">Description <span class="optional">(optional)</span>
+        <textarea id="descriptionInput" rows="3" placeholder="Add a short note"></textarea>
+      </label>
+
+      <p id="formError" class="form-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button id="cancelBtn" class="secondary" type="button">Cancel</button>
+        <button class="primary" type="submit">Save Expense</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
